@@ -1,9 +1,9 @@
 class DeviseCreateUsers < ActiveRecord::Migration
   def change
     create_table(:users) do |t|
-      t.bushido_authenticatable :null => false
+      t.bushido_authenticatable
       t.trackable
-
+      t.string :name
       t.timestamps
     end
 
