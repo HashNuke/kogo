@@ -3,6 +3,8 @@
     $.data(document, 'channel_id',      #{@channel.id})
     $.data(document, 'last_message_id', #{@messages.last.id})
 
+%audio{:class => "audio_stage"}
+
 .messages
   - @messages.each do |message|
     .message

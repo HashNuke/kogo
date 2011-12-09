@@ -3,26 +3,41 @@ $ ->
   console.log("kogo started!")
 
 
+# window.commands
+window.commands = {
+  "play": /^\/play .*/
+  ,"": /^\/me .*/
+}
+
+
+# window.perform_play(name)
+window.perform_play = (message) ->
+  console.log message
+  sounds = {"gobushido": "hey.mp3", "claps": "cheer.mp3"}
+  for sound, file_name of sounds
+    play_sound(file_name) if message.trim().match(sound)
+
+
+# window.perform_me(message)
+# window.perform_me = (message) ->
+
+
+# perform(command, message)
+perform = (command, message) ->
+  window["perform_" + command](message)
+
+
 # perform_sound(name)
 play_sound = (file_name) ->
   console.log file_name
-
-
-# match_sound(name)
-match_sound = (name) ->
-  sounds = {"gobushido": "hey.wav", "claps": "cheer.wav"}
-  for sound, file_name of sounds
-    play_sound(file_name) if name.trim().match(sound)
+  $('audio')[0].setAttribute('src', '/sounds/'+file_name)
+  $('audio')[0].play();
 
 
 # does_contain_command(message)
 does_contain_command = (message) ->
-  commands = {
-    "play": /^\/play .*/
-    ,"me": /^\/me .*/
-  }
-  for command, pattern of commands
-    return true if message.match(pattern)
+  for command, pattern of window.commands
+    return command if message.match(pattern)
   return false
 
 
@@ -30,13 +45,12 @@ does_contain_command = (message) ->
 messages_callback = (messages) ->
   if messages.length > 0
     for message in messages
-      content = message["content"].trim().split(" ")
+      content = message["content"].trim()
       id = message["id"]
       command = does_contain_command(content)
-      if command and content.length > 1
-        perform(command, content.slice(1))
+      perform(command, content.slice(1)) if command and content.split(" ").length > 1
 
-      $("<div class=\"message\">"+ id + ": " + content.join(" ") + " </div>").appendTo(".messages")
+      $("<div class=\"message\">"+ id + ": " + content + " </div>").appendTo(".messages")
     $.data document, 'last_message_id', id
 
 
