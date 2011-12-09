@@ -46,11 +46,12 @@ messages_callback = (messages) ->
   if messages.length > 0
     for message in messages
       content = message["content"].trim()
+      user = message["user"]
       id = message["id"]
       command = does_contain_command(content)
       perform(command, content.slice(1)) if command and content.split(" ").length > 1
 
-      $("<div class=\"message\">"+ id + ": " + content + " </div>").appendTo(".messages")
+      $("<div class=\"message\">"+ user + ": " + content + " </div>").appendTo(".messages")
     $.data document, 'last_message_id', id
 
 

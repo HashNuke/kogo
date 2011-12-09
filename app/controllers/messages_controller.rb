@@ -1,19 +1,28 @@
 class MessagesController < ApplicationController
-
+  layout false
+  
   before_filter :authenticate_user!
 
   # GET /messages
   # GET /messages.json
   def index
     if params[:last_message_id]
-      @messages = Message.where("id > ?", params[:last_message_id])
+      @messages = Message.includes(:user).where("id > ?", params[:last_message_id])
     else
-      @messages = Message.limit(5).order(:created_at).reverse_order
+      @messages = Message.includes(:user).limit(5).order(:created_at).reverse_order
     end
 
+    @message_data = []
+    @messages.each do |message|
+      @message_data.push({
+          :id => message.id,
+          :user => message.user.name,
+          :content => message.content
+        })
+    end
+    
     respond_to do |format|
-      format.html # index.html.erb
-      format.json { render json: @messages }
+      format.json { render :json => @message_data}
     end
   end
 
